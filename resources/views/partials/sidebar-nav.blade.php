@@ -41,7 +41,7 @@
 
 <flux:sidebar.nav>
     <flux:sidebar.group :heading="__('Savings')">
-        <flux:sidebar.item icon="piggy-bank" :href="route('savings.index')" :current="request()->routeIs('savings.*')" wire:navigate>
+        <flux:sidebar.item icon="credit-card" :href="route('savings.index')" :current="request()->routeIs('savings.*')" wire:navigate>
             {{ __('Savings Accounts') }}
         </flux:sidebar.item>
         <flux:sidebar.item icon="currency-dollar" :href="route('share-capital.index')" :current="request()->routeIs('share-capital.*')" wire:navigate>
@@ -52,7 +52,7 @@
 
 <flux:sidebar.nav>
     <flux:sidebar.group :heading="__('Collections & Cashiering')">
-        <flux:sidebar.item icon="cash" :href="route('collections.index')" :current="request()->routeIs('collections.*')" wire:navigate>
+        <flux:sidebar.item icon="wallet" :href="route('collections.index')" :current="request()->routeIs('collections.*')" wire:navigate>
             {{ __('Collections') }}
         </flux:sidebar.item>
         <flux:sidebar.item icon="calculator" :href="route('cashiering.index')" :current="request()->routeIs('cashiering.*')" wire:navigate>
@@ -74,7 +74,7 @@
 
 <flux:sidebar.nav>
     <flux:sidebar.group :heading="__('Reports')">
-        <flux:sidebar.item icon="presentation-chart" :href="route('reports.index')" :current="request()->routeIs('reports.*')" wire:navigate>
+        <flux:sidebar.item icon="chart-bar" :href="route('reports.index')" :current="request()->routeIs('reports.*')" wire:navigate>
             {{ __('Reports') }}
         </flux:sidebar.item>
     </flux:sidebar.group>
