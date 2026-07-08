@@ -20,10 +20,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Client Management
     Route::livewire('clients', 'pages::clients.index')->name('clients.index');
+    Route::livewire('clients/create', 'pages::clients.create')->name('clients.create');
+    Route::livewire('clients/{client}', 'pages::clients.edit')->name('clients.edit');
 
     // Loan Management
     Route::livewire('loan-products', 'pages::loan-products.index')->name('loan-products.index');
+    Route::livewire('loan-products/create', 'pages::loan-products.create')->name('loan-products.create');
+    Route::livewire('loan-products/{product}', 'pages::loan-products.edit')->name('loan-products.edit');
     Route::livewire('loans', 'pages::loans.index')->name('loans.index');
+    Route::livewire('loans/create', 'pages::loans.create')->name('loans.create');
+    Route::livewire('loans/{loan}', 'pages::loans.show')->name('loans.show');
+    Route::livewire('loans/{loan}/edit', 'pages::loans.edit')->name('loans.edit');
 
     // Savings
     Route::livewire('savings', 'pages::savings.index')->name('savings.index');
