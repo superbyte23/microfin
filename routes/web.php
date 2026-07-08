@@ -33,8 +33,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('loans/{loan}/edit', 'pages::loans.edit')->name('loans.edit');
 
     // Savings
-    Route::livewire('savings', 'pages::savings.index')->name('savings.index');
+    Route::livewire('savings-products', 'pages::savings-products.index')->name('savings-products.index');
+    Route::livewire('savings-products/create', 'pages::savings-products.create')->name('savings-products.create');
+    Route::livewire('savings-products/{product}', 'pages::savings-products.edit')->name('savings-products.edit');
+    Route::livewire('savings-accounts', 'pages::savings.index')->name('savings.index');
+    Route::livewire('savings-accounts/create', 'pages::savings.create')->name('savings.create');
+    Route::livewire('savings-accounts/{account}', 'pages::savings.show')->name('savings.show');
     Route::livewire('share-capital', 'pages::share-capital.index')->name('share-capital.index');
+    Route::livewire('share-capital/create', 'pages::share-capital.create')->name('share-capital.create');
+    Route::livewire('share-capital/{share_capital}', 'pages::share-capital.edit')->name('share-capital.edit');
 
     // Collections & Cashiering
     Route::livewire('collections', 'pages::collections.index')->name('collections.index');
