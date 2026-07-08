@@ -82,49 +82,49 @@ new #[Layout('layouts::app')] class extends Component {
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading size="sm">Status</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 @php $colors = ['pending' => 'yellow', 'approved' => 'blue', 'active' => 'green', 'closed' => 'zinc', 'rejected' => 'red', 'written-off' => 'red']; @endphp
                 <flux:badge size="lg" :color="$colors[$loan->status] ?? 'zinc'">{{ ucfirst($loan->status) }}</flux:badge>
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading size="sm">Principal</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 <flux:heading size="lg">{{ number_format($loan->principal_amount, 2) }}</flux:heading>
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading size="sm">Total Paid</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 <flux:heading size="lg">{{ number_format($this->totalPaid, 2) }}</flux:heading>
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading size="sm">Balance</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 <flux:heading size="lg">{{ number_format(max($loan->principal_amount - $this->totalPaid, 0), 2) }}</flux:heading>
-            </flux:card.content>
+            </div>
         </flux:card>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Loan Details</flux:heading>
-            </flux:card.header>
-            <flux:card.content class="space-y-3">
+            </div>
+            <div class="space-y-3">
                 <div class="flex justify-between"><flux:text>Client</flux:text><span>{{ $loan->client->full_name }}</span></div>
                 <div class="flex justify-between"><flux:text>Product</flux:text><span>{{ $loan->product?->name }}</span></div>
                 <div class="flex justify-between"><flux:text>Interest</flux:text><span>{{ $loan->interest_rate }}% {{ ucfirst($loan->interest_type) }}</span></div>
@@ -137,14 +137,14 @@ new #[Layout('layouts::app')] class extends Component {
                 @if($loan->purpose)
                     <div><flux:text>Purpose</flux:text><p class="mt-1">{{ $loan->purpose }}</p></div>
                 @endif
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Recent Transactions</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 @if($this->transactions->isEmpty())
                     <flux:text>No transactions yet.</flux:text>
                 @else
@@ -160,16 +160,16 @@ new #[Layout('layouts::app')] class extends Component {
                         @endforeach
                     </div>
                 @endif
-            </flux:card.content>
+            </div>
         </flux:card>
     </div>
 
     @if($loan->status === 'active' || $loan->status === 'closed')
         <flux:card class="mt-6">
-            <flux:card.header>
+            <div>
                 <flux:heading>Amortization Schedule</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 <flux:table>
                     <flux:table.columns>
                         <flux:table.column>#</flux:table.column>
@@ -198,7 +198,7 @@ new #[Layout('layouts::app')] class extends Component {
                         @endforeach
                     </flux:table.rows>
                 </flux:table>
-            </flux:card.content>
+            </div>
         </flux:card>
     @endif
 </div>

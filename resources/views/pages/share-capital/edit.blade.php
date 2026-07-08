@@ -47,7 +47,7 @@ new #[Layout('layouts::app')] class extends Component {
     </div>
 
     <flux:card>
-        <flux:card.content class="space-y-4">
+        <div class="space-y-4">
             <flux:input wire:model="total_shares" label="Number of Shares" type="number" required />
             <flux:input wire:model="share_price" label="Price Per Share" type="number" step="0.01" required />
             <flux:select wire:model="status" label="Status" required>
@@ -57,12 +57,12 @@ new #[Layout('layouts::app')] class extends Component {
 
             @if($total_shares && $share_price)
                 <flux:card class="bg-zinc-50 dark:bg-zinc-800">
-                    <flux:card.content>
+                    <div>
                         <flux:heading size="sm">Total Amount: {{ number_format((int)$total_shares * (float)$share_price, 2) }}</flux:heading>
-                    </flux:card.content>
+                    </div>
                 </flux:card>
             @endif
-        </flux:card.content>
+        </div>
     </flux:card>
 
     <div class="mt-6 flex justify-end gap-4">

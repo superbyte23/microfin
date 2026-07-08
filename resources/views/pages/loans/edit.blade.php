@@ -62,7 +62,7 @@ new #[Layout('layouts::app')] class extends Component {
     </div>
 
     <flux:card>
-        <flux:card.content class="space-y-4">
+        <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <flux:select wire:model="loan_product_id" label="Loan Product" required>
                     @foreach ($this->products as $product)
@@ -89,7 +89,7 @@ new #[Layout('layouts::app')] class extends Component {
                     <option value="written-off">Written Off</option>
                 </flux:select>
             </div>
-        </flux:card.content>
+        </div>
     </flux:card>
 
     <div class="mt-6 flex justify-end gap-4">

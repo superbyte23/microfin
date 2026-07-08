@@ -134,11 +134,11 @@ new #[Layout('layouts::app')] class extends Component {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-1">
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Active Loans</flux:heading>
                     <flux:subheading>Select a loan to record payment</flux:subheading>
-                </flux:card.header>
-                <flux:card.content>
+                </div>
+                <div>
                     <flux:input wire:model.live.debounce.300ms="search" placeholder="Search client..." icon="magnifying-glass" class="mb-4" />
 
                     <div class="space-y-2 max-h-96 overflow-y-auto">
@@ -157,7 +157,7 @@ new #[Layout('layouts::app')] class extends Component {
                             <flux:text>No active loans found.</flux:text>
                         @endforelse
                     </div>
-                </flux:card.content>
+                </div>
             </flux:card>
         </div>
 
@@ -167,30 +167,30 @@ new #[Layout('layouts::app')] class extends Component {
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <flux:card>
-                        <flux:card.header><flux:heading size="sm">Principal</flux:heading></flux:card.header>
-                        <flux:card.content><flux:heading>{{ number_format($loan->principal_amount, 2) }}</flux:heading></flux:card.content>
+                        <div><flux:heading size="sm">Principal</flux:heading></div>
+                        <div><flux:heading>{{ number_format($loan->principal_amount, 2) }}</flux:heading></div>
                     </flux:card>
                     <flux:card>
-                        <flux:card.header><flux:heading size="sm">Total Paid</flux:heading></flux:card.header>
-                        <flux:card.content><flux:heading>{{ number_format($loan->transactions()->sum('amount'), 2) }}</flux:heading></flux:card.content>
+                        <div><flux:heading size="sm">Total Paid</flux:heading></div>
+                        <div><flux:heading>{{ number_format($loan->transactions()->sum('amount'), 2) }}</flux:heading></div>
                     </flux:card>
                     <flux:card>
-                        <flux:card.header><flux:heading size="sm">Balance</flux:heading></flux:card.header>
-                        <flux:card.content>
+                        <div><flux:heading size="sm">Balance</flux:heading></div>
+                        <div>
                             @php
                                 $totalDue = $loan->amortizationSchedule()->sum('total_due');
                                 $totalPaid = $loan->amortizationSchedule()->sum('paid_amount');
                             @endphp
                             <flux:heading>{{ number_format(max($totalDue - $totalPaid, 0), 2) }}</flux:heading>
-                        </flux:card.content>
+                        </div>
                     </flux:card>
                 </div>
 
                 <flux:card class="mb-6">
-                    <flux:card.header>
+                    <div>
                         <flux:heading>Record Payment</flux:heading>
-                    </flux:card.header>
-                    <flux:card.content class="space-y-4">
+                    </div>
+                    <div class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <flux:input wire:model="paid_amount" label="Amount" type="number" step="0.01" required placeholder="0.00" />
                             <flux:select wire:model="payment_method" label="Payment Method" required>
@@ -203,14 +203,14 @@ new #[Layout('layouts::app')] class extends Component {
                         </div>
                         <flux:textarea wire:model="notes" label="Notes" />
                         <flux:button variant="primary" wire:click="recordPayment" class="w-full">Record Payment</flux:button>
-                    </flux:card.content>
+                    </div>
                 </flux:card>
 
                 <flux:card>
-                    <flux:card.header>
+                    <div>
                         <flux:heading>Amortization Schedule</flux:heading>
-                    </flux:card.header>
-                    <flux:card.content>
+                    </div>
+                    <div>
                         <flux:table>
                             <flux:table.columns>
                                 <flux:table.column>#</flux:table.column>
@@ -238,14 +238,14 @@ new #[Layout('layouts::app')] class extends Component {
                                 @endforeach
                             </flux:table.rows>
                         </flux:table>
-                    </flux:card.content>
+                    </div>
                 </flux:card>
             @else
                 <flux:card>
-                    <flux:card.content class="text-center py-12">
+                    <div class="text-center py-12">
                         <flux:heading>Select a loan from the left panel</flux:heading>
                         <flux:subheading>Search for an active loan to record payments</flux:subheading>
-                    </flux:card.content>
+                    </div>
                 </flux:card>
             @endif
         </div>

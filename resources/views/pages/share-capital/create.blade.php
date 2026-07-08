@@ -76,10 +76,10 @@ new #[Layout('layouts::app')] class extends Component {
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Client</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 <flux:input wire:model.live.debounce.300ms="search" placeholder="Search clients..." icon="magnifying-glass" class="mb-4" />
                 <div class="space-y-2 max-h-48 overflow-y-auto">
                     @foreach ($this->clients as $client)
@@ -92,14 +92,14 @@ new #[Layout('layouts::app')] class extends Component {
                         </label>
                     @endforeach
                 </div>
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Share Details</flux:heading>
-            </flux:card.header>
-            <flux:card.content class="space-y-4">
+            </div>
+            <div class="space-y-4">
                 <flux:input wire:model="total_shares" label="Number of Shares" type="number" required />
                 <flux:input wire:model="share_price" label="Price Per Share" type="number" step="0.01" required />
                 <flux:select wire:model="branch_id" label="Branch" required>
@@ -110,12 +110,12 @@ new #[Layout('layouts::app')] class extends Component {
 
                 @if($total_shares && $share_price)
                     <flux:card class="bg-zinc-50 dark:bg-zinc-800">
-                        <flux:card.content>
+                        <div>
                             <flux:heading size="sm">Total Amount: {{ number_format((int)$total_shares * (float)$share_price, 2) }}</flux:heading>
-                        </flux:card.content>
+                        </div>
                     </flux:card>
                 @endif
-            </flux:card.content>
+            </div>
         </flux:card>
     </div>
 

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::livewire('dashboard', 'pages::dashboard')->name('dashboard');
 
     // Administration
     Route::livewire('users', 'pages::users.index')->name('users.index');
@@ -59,6 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Reports
     Route::livewire('reports', 'pages::reports.index')->name('reports.index');
+    Route::livewire('reports/loan-portfolio', 'pages::reports.loan-portfolio')->name('reports.loan-portfolio');
+    Route::livewire('reports/collections', 'pages::reports.collections')->name('reports.collections');
+    Route::livewire('reports/savings', 'pages::reports.savings')->name('reports.savings');
 });
 
 require __DIR__.'/settings.php';

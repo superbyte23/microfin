@@ -105,10 +105,10 @@ new #[Layout('layouts::app')] class extends Component {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Client</flux:heading>
-                </flux:card.header>
-                <flux:card.content>
+                </div>
+                <div>
                     <flux:input wire:model.live.debounce.300ms="search" placeholder="Search clients..." icon="magnifying-glass" class="mb-4" />
 
                     <div class="space-y-2 max-h-48 overflow-y-auto">
@@ -122,14 +122,14 @@ new #[Layout('layouts::app')] class extends Component {
                             </label>
                         @endforeach
                     </div>
-                </flux:card.content>
+                </div>
             </flux:card>
 
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Loan Details</flux:heading>
-                </flux:card.header>
-                <flux:card.content class="space-y-4">
+                </div>
+                <div class="space-y-4">
                     <flux:select wire:model="loan_product_id" label="Loan Product" required>
                         <option value="">-- Select Product --</option>
                         @foreach ($this->products as $product)
@@ -153,22 +153,22 @@ new #[Layout('layouts::app')] class extends Component {
                     @endif
 
                     <flux:textarea wire:model="purpose" label="Loan Purpose" />
-                </flux:card.content>
+                </div>
             </flux:card>
         </div>
 
         <div>
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Assignment</flux:heading>
-                </flux:card.header>
-                <flux:card.content class="space-y-4">
+                </div>
+                <div class="space-y-4">
                     <flux:select wire:model="branch_id" label="Branch" required>
                         @foreach ($this->branches as $branch)
                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                         @endforeach
                     </flux:select>
-                </flux:card.content>
+                </div>
             </flux:card>
 
             <div class="mt-6 space-y-2">

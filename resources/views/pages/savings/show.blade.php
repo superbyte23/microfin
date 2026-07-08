@@ -68,31 +68,31 @@ new #[Layout('layouts::app')] class extends Component {
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <flux:card>
-            <flux:card.header><flux:heading size="sm">Balance</flux:heading></flux:card.header>
-            <flux:card.content>
+            <div><flux:heading size="sm">Balance</flux:heading></div>
+            <div>
                 <flux:heading size="xl">{{ number_format($account->balance, 2) }}</flux:heading>
-            </flux:card.content>
+            </div>
         </flux:card>
         <flux:card>
-            <flux:card.header><flux:heading size="sm">Status</flux:heading></flux:card.header>
-            <flux:card.content>
+            <div><flux:heading size="sm">Status</flux:heading></div>
+            <div>
                 <flux:badge size="lg" :color="$account->status === 'active' ? 'green' : 'zinc'">{{ ucfirst($account->status) }}</flux:badge>
-            </flux:card.content>
+            </div>
         </flux:card>
         <flux:card>
-            <flux:card.header><flux:heading size="sm">Branch</flux:heading></flux:card.header>
-            <flux:card.content>
+            <div><flux:heading size="sm">Branch</flux:heading></div>
+            <div>
                 <flux:heading size="sm">{{ $account->branch?->name }}</flux:heading>
-            </flux:card.content>
+            </div>
         </flux:card>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>New Transaction</flux:heading>
-            </flux:card.header>
-            <flux:card.content class="space-y-4">
+            </div>
+            <div class="space-y-4">
                 <flux:select wire:model="transaction_type" label="Type">
                     <option value="deposit">Deposit</option>
                     <option value="withdrawal">Withdrawal</option>
@@ -100,14 +100,14 @@ new #[Layout('layouts::app')] class extends Component {
                 <flux:input wire:model="amount" label="Amount" type="number" step="0.01" required />
                 <flux:textarea wire:model="notes" label="Notes" />
                 <flux:button variant="primary" wire:click="saveTransaction" class="w-full">Save Transaction</flux:button>
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Transaction History</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 @if($this->transactions->isEmpty())
                     <flux:text>No transactions yet.</flux:text>
                 @else
@@ -135,7 +135,7 @@ new #[Layout('layouts::app')] class extends Component {
                         @endforeach
                     </div>
                 @endif
-            </flux:card.content>
+            </div>
         </flux:card>
     </div>
 </div>

@@ -53,7 +53,7 @@ new #[Layout('layouts::app')] class extends Component {
     </div>
 
     <flux:card>
-        <flux:card.content class="space-y-4">
+        <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <flux:input wire:model="code" label="Account Code" required />
                 <flux:input wire:model="name" label="Account Name" required />
@@ -78,7 +78,7 @@ new #[Layout('layouts::app')] class extends Component {
             <flux:checkbox wire:model="is_active" label="Active" />
 
             <flux:textarea wire:model="description" label="Description" />
-        </flux:card.content>
+        </div>
     </flux:card>
 
     <div class="mt-6 flex justify-end gap-4">

@@ -106,12 +106,12 @@ new #[Layout('layouts::app')] class extends Component {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Entry Lines</flux:heading>
                     <flux:text>Total Debits: <span class="text-red-600 font-bold">{{ number_format($this->getTotalDebitsProperty(), 2) }}</span>
                     · Total Credits: <span class="text-green-600 font-bold">{{ number_format($this->getTotalCreditsProperty(), 2) }}</span></flux:text>
-                </flux:card.header>
-                <flux:card.content class="space-y-4">
+                </div>
+                <div class="space-y-4">
                     @foreach ($lines as $i => $line)
                         <div class="flex gap-2 items-start">
                             <div class="flex-1">
@@ -138,16 +138,16 @@ new #[Layout('layouts::app')] class extends Component {
                         </div>
                     @endforeach
                     <flux:button variant="ghost" wire:click="addLine" class="w-full">+ Add Line</flux:button>
-                </flux:card.content>
+                </div>
             </flux:card>
         </div>
 
         <div>
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Entry Details</flux:heading>
-                </flux:card.header>
-                <flux:card.content class="space-y-4">
+                </div>
+                <div class="space-y-4">
                     <flux:input wire:model="entry_date" label="Entry Date" type="date" required />
                     <flux:textarea wire:model="description" label="Description" required />
                     <flux:input wire:model="reference_type" label="Reference Type" placeholder="e.g. loan_payment" />
@@ -156,7 +156,7 @@ new #[Layout('layouts::app')] class extends Component {
                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                         @endforeach
                     </flux:select>
-                </flux:card.content>
+                </div>
             </flux:card>
 
             <div class="mt-6 space-y-2">

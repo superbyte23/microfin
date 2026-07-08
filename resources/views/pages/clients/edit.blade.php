@@ -73,10 +73,10 @@ new #[Layout('layouts::app')] class extends Component {
     </div>
 
     <flux:card>
-        <flux:card.header>
+        <div>
             <flux:heading>Personal Information</flux:heading>
-        </flux:card.header>
-        <flux:card.content class="space-y-4">
+        </div>
+        <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <flux:input wire:model="first_name" label="First Name" required />
                 <flux:input wire:model="middle_name" label="Middle Name" />
@@ -105,27 +105,27 @@ new #[Layout('layouts::app')] class extends Component {
             </div>
 
             <flux:input wire:model="birth_date" label="Birth Date" type="date" />
-        </flux:card.content>
+        </div>
     </flux:card>
 
     <flux:card class="mt-6">
-        <flux:card.header>
+        <div>
             <flux:heading>Contact & Address</flux:heading>
-        </flux:card.header>
-        <flux:card.content class="space-y-4">
+        </div>
+        <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <flux:input wire:model="phone" label="Phone" type="tel" />
                 <flux:input wire:model="email" label="Email" type="email" />
             </div>
             <flux:textarea wire:model="address" label="Address" />
-        </flux:card.content>
+        </div>
     </flux:card>
 
     <flux:card class="mt-6">
-        <flux:card.header>
+        <div>
             <flux:heading>Assignment</flux:heading>
-        </flux:card.header>
-        <flux:card.content class="space-y-4">
+        </div>
+        <div class="space-y-4">
             <flux:select wire:model="branch_id" label="Branch" required>
                 @foreach ($this->branches() as $branch)
                     <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -137,7 +137,7 @@ new #[Layout('layouts::app')] class extends Component {
                 <option value="inactive">Inactive</option>
                 <option value="restricted">Restricted</option>
             </flux:select>
-        </flux:card.content>
+        </div>
     </flux:card>
 
     <div class="mt-6 flex justify-end gap-4">

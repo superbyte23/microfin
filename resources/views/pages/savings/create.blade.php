@@ -87,10 +87,10 @@ new #[Layout('layouts::app')] class extends Component {
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Client</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 <flux:input wire:model.live.debounce.300ms="search" placeholder="Search clients..." icon="magnifying-glass" class="mb-4" />
                 <div class="space-y-2 max-h-48 overflow-y-auto">
                     @foreach ($this->clients as $client)
@@ -103,14 +103,14 @@ new #[Layout('layouts::app')] class extends Component {
                         </label>
                     @endforeach
                 </div>
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Account Details</flux:heading>
-            </flux:card.header>
-            <flux:card.content class="space-y-4">
+            </div>
+            <div class="space-y-4">
                 <flux:select wire:model="savings_product_id" label="Savings Product" required>
                     <option value="">-- Select --</option>
                     @foreach ($this->products as $product)
@@ -123,7 +123,7 @@ new #[Layout('layouts::app')] class extends Component {
                     @endforeach
                 </flux:select>
                 <flux:input wire:model="initial_deposit" label="Initial Deposit" type="number" step="0.01" required />
-            </flux:card.content>
+            </div>
         </flux:card>
     </div>
 

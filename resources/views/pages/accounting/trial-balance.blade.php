@@ -59,7 +59,7 @@ new #[Layout('layouts::app')] class extends Component {
     </div>
 
     <flux:card>
-        <flux:card.content>
+        <div>
             <flux:table>
                 <flux:table.columns>
                     <flux:table.column>Code</flux:table.column>
@@ -97,6 +97,6 @@ new #[Layout('layouts::app')] class extends Component {
                     <span class="text-green-600">{{ number_format($this->totalCredits, 2) }}</span>
                 </div>
             </div>
-        </flux:card.content>
+        </div>
     </flux:card>
 </div>

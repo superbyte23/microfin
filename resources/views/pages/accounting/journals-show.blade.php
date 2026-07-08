@@ -32,38 +32,38 @@ new #[Layout('layouts::app')] class extends Component {
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <flux:card>
-            <flux:card.header><flux:heading size="sm">Date</flux:heading></flux:card.header>
-            <flux:card.content><flux:heading>{{ $journal->entry_date->format('M d, Y') }}</flux:heading></flux:card.content>
+            <div><flux:heading size="sm">Date</flux:heading></div>
+            <div><flux:heading>{{ $journal->entry_date->format('M d, Y') }}</flux:heading></div>
         </flux:card>
         <flux:card>
-            <flux:card.header><flux:heading size="sm">Total Debits</flux:heading></flux:card.header>
-            <flux:card.content><flux:heading class="text-red-600">{{ number_format($this->totalDebits, 2) }}</flux:heading></flux:card.content>
+            <div><flux:heading size="sm">Total Debits</flux:heading></div>
+            <div><flux:heading class="text-red-600">{{ number_format($this->totalDebits, 2) }}</flux:heading></div>
         </flux:card>
         <flux:card>
-            <flux:card.header><flux:heading size="sm">Total Credits</flux:heading></flux:card.header>
-            <flux:card.content><flux:heading class="text-green-600">{{ number_format($this->totalCredits, 2) }}</flux:heading></flux:card.content>
+            <div><flux:heading size="sm">Total Credits</flux:heading></div>
+            <div><flux:heading class="text-green-600">{{ number_format($this->totalCredits, 2) }}</flux:heading></div>
         </flux:card>
     </div>
 
     <flux:card class="mb-6">
-        <flux:card.header>
+        <div>
             <flux:heading>Details</flux:heading>
-        </flux:card.header>
-        <flux:card.content class="space-y-2">
+        </div>
+        <div class="space-y-2">
             <div class="flex justify-between"><flux:text>Description</flux:text><span>{{ $journal->description }}</span></div>
             @if($journal->reference_type)
                 <div class="flex justify-between"><flux:text>Reference</flux:text><span>{{ $journal->reference_type }}: {{ $journal->reference_id ?? '—' }}</span></div>
             @endif
             <div class="flex justify-between"><flux:text>Branch</flux:text><span>{{ $journal->branch?->name }}</span></div>
             <div class="flex justify-between"><flux:text>Created By</flux:text><span>{{ $journal->createdBy?->name }}</span></div>
-        </flux:card.content>
+        </div>
     </flux:card>
 
     <flux:card>
-        <flux:card.header>
+        <div>
             <flux:heading>Journal Lines</flux:heading>
-        </flux:card.header>
-        <flux:card.content>
+        </div>
+        <div>
             <flux:table>
                 <flux:table.columns>
                     <flux:table.column>Account Code</flux:table.column>
@@ -92,6 +92,6 @@ new #[Layout('layouts::app')] class extends Component {
                     @endforeach
                 </flux:table.rows>
             </flux:table>
-        </flux:card.content>
+        </div>
     </flux:card>
 </div>

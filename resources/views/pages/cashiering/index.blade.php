@@ -165,29 +165,29 @@ new #[Layout('layouts::app')] class extends Component {
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <flux:card>
-                <flux:card.header><flux:heading size="sm">Opening</flux:heading></flux:card.header>
-                <flux:card.content><flux:heading>{{ number_format($session->opening_balance, 2) }}</flux:heading></flux:card.content>
+                <div><flux:heading size="sm">Opening</flux:heading></div>
+                <div><flux:heading>{{ number_format($session->opening_balance, 2) }}</flux:heading></div>
             </flux:card>
             <flux:card>
-                <flux:card.header><flux:heading size="sm">Cash In</flux:heading></flux:card.header>
-                <flux:card.content class="text-green-600"><flux:heading>+{{ number_format($session->total_cash_in, 2) }}</flux:heading></flux:card.content>
+                <div><flux:heading size="sm">Cash In</flux:heading></div>
+                <div class="text-green-600"><flux:heading>+{{ number_format($session->total_cash_in, 2) }}</flux:heading></div>
             </flux:card>
             <flux:card>
-                <flux:card.header><flux:heading size="sm">Cash Out</flux:heading></flux:card.header>
-                <flux:card.content class="text-red-600"><flux:heading>-{{ number_format($session->total_cash_out, 2) }}</flux:heading></flux:card.content>
+                <div><flux:heading size="sm">Cash Out</flux:heading></div>
+                <div class="text-red-600"><flux:heading>-{{ number_format($session->total_cash_out, 2) }}</flux:heading></div>
             </flux:card>
             <flux:card>
-                <flux:card.header><flux:heading size="sm">Current Balance</flux:heading></flux:card.header>
-                <flux:card.content><flux:heading size="xl">{{ number_format($currentBalance, 2) }}</flux:heading></flux:card.content>
+                <div><flux:heading size="sm">Current Balance</flux:heading></div>
+                <div><flux:heading size="xl">{{ number_format($currentBalance, 2) }}</flux:heading></div>
             </flux:card>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Cash In</flux:heading>
-                </flux:card.header>
-                <flux:card.content class="space-y-4">
+                </div>
+                <div class="space-y-4">
                     <flux:input wire:model="cash_in_amount" label="Amount" type="number" step="0.01" required />
                     <flux:select wire:model="cash_in_category" label="Category">
                         <option value="collection">Collection</option>
@@ -197,14 +197,14 @@ new #[Layout('layouts::app')] class extends Component {
                     </flux:select>
                     <flux:textarea wire:model="cash_in_notes" label="Notes" />
                     <flux:button variant="primary" wire:click="recordCashIn" class="w-full">Record Cash In</flux:button>
-                </flux:card.content>
+                </div>
             </flux:card>
 
             <flux:card>
-                <flux:card.header>
+                <div>
                     <flux:heading>Cash Out</flux:heading>
-                </flux:card.header>
-                <flux:card.content class="space-y-4">
+                </div>
+                <div class="space-y-4">
                     <flux:input wire:model="cash_out_amount" label="Amount" type="number" step="0.01" required />
                     <flux:select wire:model="cash_out_category" label="Category">
                         <option value="expense">Expense</option>
@@ -215,15 +215,15 @@ new #[Layout('layouts::app')] class extends Component {
                     </flux:select>
                     <flux:textarea wire:model="cash_out_notes" label="Notes" />
                     <flux:button variant="primary" wire:click="recordCashOut" class="w-full">Record Cash Out</flux:button>
-                </flux:card.content>
+                </div>
             </flux:card>
         </div>
 
         <flux:card class="mb-6">
-            <flux:card.header>
+            <div>
                 <flux:heading>Session Transactions</flux:heading>
-            </flux:card.header>
-            <flux:card.content>
+            </div>
+            <div>
                 @if($session->transactions->isEmpty())
                     <flux:text>No transactions yet.</flux:text>
                 @else
@@ -254,36 +254,36 @@ new #[Layout('layouts::app')] class extends Component {
                         </flux:table.rows>
                     </flux:table>
                 @endif
-            </flux:card.content>
+            </div>
         </flux:card>
 
         <flux:card>
-            <flux:card.header>
+            <div>
                 <flux:heading>Close Session</flux:heading>
-            </flux:card.header>
-            <flux:card.content class="space-y-4">
+            </div>
+            <div class="space-y-4">
                 <flux:textarea wire:model="closing_note" label="Closing Notes" />
                 <flux:button variant="danger" wire:click="closeSession" wire:confirm="Close this cash session?">Close Session</flux:button>
-            </flux:card.content>
+            </div>
         </flux:card>
     @else
         <flux:card class="mb-6">
-            <flux:card.header>
+            <div>
                 <flux:heading>Open Cash Session</flux:heading>
                 <flux:subheading>Start your daily cash session</flux:subheading>
-            </flux:card.header>
-            <flux:card.content class="space-y-4">
+            </div>
+            <div class="space-y-4">
                 <flux:input wire:model="opening_balance" label="Opening Balance" type="number" step="0.01" required />
                 <flux:button variant="primary" wire:click="openSession">Open Session</flux:button>
-            </flux:card.content>
+            </div>
         </flux:card>
     @endif
 
     <flux:card>
-        <flux:card.header>
+        <div>
             <flux:heading>Session History</flux:heading>
-        </flux:card.header>
-        <flux:card.content>
+        </div>
+        <div>
             <flux:table>
                 <flux:table.columns>
                     <flux:table.column>Date</flux:table.column>
@@ -311,6 +311,6 @@ new #[Layout('layouts::app')] class extends Component {
                 </flux:table.rows>
             </flux:table>
             {{ $this->allSessions->links() }}
-        </flux:card.content>
+        </div>
     </flux:card>
 </div>
