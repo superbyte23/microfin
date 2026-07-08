@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(RoleSeeder::class);
+        $this->call(ChartOfAccountSeeder::class);
 
         $admin = User::factory()->create([
             'name' => 'Super Admin',

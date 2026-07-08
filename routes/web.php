@@ -49,7 +49,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Accounting
     Route::livewire('accounting', 'pages::accounting.index')->name('accounting.index');
+    Route::livewire('accounting/chart-of-accounts', 'pages::accounting.chart-of-accounts')->name('accounting.chart-of-accounts');
+    Route::livewire('accounting/chart-of-accounts/create', 'pages::accounting.chart-of-accounts-create')->name('accounting.chart-of-accounts.create');
+    Route::livewire('accounting/chart-of-accounts/{account}', 'pages::accounting.chart-of-accounts-edit')->name('accounting.chart-of-accounts.edit');
     Route::livewire('accounting/journals', 'pages::accounting.journals')->name('accounting.journals');
+    Route::livewire('accounting/journals/create', 'pages::accounting.journals-create')->name('accounting.journals.create');
+    Route::livewire('accounting/journals/{journal}', 'pages::accounting.journals-show')->name('accounting.journals.show');
+    Route::livewire('accounting/trial-balance', 'pages::accounting.trial-balance')->name('accounting.trial-balance');
 
     // Reports
     Route::livewire('reports', 'pages::reports.index')->name('reports.index');
