@@ -47,7 +47,7 @@ new #[Layout('layouts::app')] class extends Component {
 
         <flux:table.rows>
             @foreach ($this->shareCapitals as $sc)
-                <flux:table.row :key="$sc->id">
+                <flux:table.row wire:key="share-{{ $sc->id }}">
                     <flux:table.cell>{{ $sc->client->full_name }}</flux:table.cell>
                     <flux:table.cell>{{ number_format($sc->total_shares) }}</flux:table.cell>
                     <flux:table.cell>{{ number_format($sc->share_price, 2) }}</flux:table.cell>
@@ -66,5 +66,5 @@ new #[Layout('layouts::app')] class extends Component {
         </flux:table.rows>
     </flux:table>
 
-    {{ $this->shareCapitals->links() }}
+    <flux:pagination :paginator="$this->shareCapitals" />
 </div>

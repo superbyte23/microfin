@@ -79,7 +79,7 @@ new #[Layout('layouts::app')] class extends Component {
     <div class="flex items-center justify-between mb-6">
         <div>
             <flux:heading size="xl">Dashboard</flux:heading>
-            <flux:subheading>Microfinance Overview</flux:subheading>
+            <flux:subheading>Microfin Overview</flux:subheading>
         </div>
         <flux:text>{{ now()->format('l, F d, Y') }}</flux:text>
     </div>

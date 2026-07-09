@@ -6,10 +6,11 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Sanctum\HasApiTokens;
 
 class Client extends Model
 {
-    use HasFactory, HasUuid, SoftDeletes;
+    use HasApiTokens, HasFactory, HasUuid, SoftDeletes;
 
     protected $fillable = [
         'type',
@@ -30,6 +31,12 @@ class Client extends Model
         'group_id',
         'status',
         'kyc_fields',
+        'member_id',
+        'pin',
+    ];
+
+    protected $hidden = [
+        'pin',
     ];
 
     protected function casts(): array
@@ -37,6 +44,7 @@ class Client extends Model
         return [
             'birth_date' => 'date',
             'kyc_fields' => 'array',
+            'pin' => 'hashed',
         ];
     }
 
@@ -53,6 +61,11 @@ class Client extends Model
     public function documents()
     {
         return $this->hasMany(ClientDocument::class);
+    }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
     }
 
     public function getFullNameAttribute(): string

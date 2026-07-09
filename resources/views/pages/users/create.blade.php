@@ -1,10 +1,8 @@
 <?php
 
-use App\Models\Branch;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -51,28 +49,31 @@ new #[Layout('layouts::app')] class extends Component {
         </div>
     </div>
 
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
+
     <flux:card class="max-w-2xl">
         <form wire:submit="save" class="space-y-6">
-            <flux:input wire:model="name" label="Full Name" required />
-
-            <flux:input wire:model="email" label="Email Address" type="email" required />
+            @include('pages.users._form')
 
             <div class="grid grid-cols-2 gap-4">
-                <flux:input wire:model="password" label="Password" type="password" required />
-                <flux:input wire:model="password_confirmation" label="Confirm Password" type="password" required />
+                <flux:field>
+                    <flux:label>Password</flux:label>
+                    <flux:input wire:model="password" type="password" required />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Confirm Password</flux:label>
+                    <flux:input wire:model="password_confirmation" type="password" required />
+                </flux:field>
             </div>
-
-            <flux:select wire:model="branch_id" label="Branch" placeholder="Select branch">
-                @foreach (Branch::where('is_active', true)->get() as $branch)
-                    <flux:select.option value="{{ $branch->id }}">{{ $branch->name }}</flux:select.option>
-                @endforeach
-            </flux:select>
-
-            <flux:select wire:model="role" label="Role" placeholder="Select role" required>
-                @foreach (Spatie\Permission\Models\Role::all() as $role)
-                    <flux:select.option value="{{ $role->name }}">{{ $role->name }}</flux:select.option>
-                @endforeach
-            </flux:select>
 
             <div class="flex gap-2 justify-end">
                 <flux:button :href="route('users.index')" variant="ghost" wire:navigate>Cancel</flux:button>

@@ -47,37 +47,24 @@ new #[Layout('layouts::app')] class extends Component {
         <flux:button variant="ghost" :href="route('accounting.chart-of-accounts')" wire:navigate>Back</flux:button>
     </div>
 
-    <flux:card>
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:input wire:model="code" label="Account Code" required hint="e.g. 1050" />
-                <flux:input wire:model="name" label="Account Name" required />
-            </div>
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:select wire:model="type" label="Type" required>
-                    <option value="asset">Asset</option>
-                    <option value="liability">Liability</option>
-                    <option value="equity">Equity</option>
-                    <option value="income">Income</option>
-                    <option value="expense">Expense</option>
-                </flux:select>
-                <flux:select wire:model="parent_id" label="Parent Account">
-                    <option value="">None (Top Level)</option>
-                    @foreach ($this->parentAccounts() as $account)
-                        <option value="{{ $account->id }}">{{ $account->code }} - {{ $account->name }}</option>
-                    @endforeach
-                </flux:select>
-            </div>
+    <form wire:submit="save">
+        <flux:card class="space-y-6">
+            @include('pages.chart-of-accounts._form')
+        </flux:card>
 
-            <flux:checkbox wire:model="is_active" label="Active" />
-
-            <flux:textarea wire:model="description" label="Description" />
+        <div class="mt-6 flex justify-end gap-4">
+            <flux:button variant="ghost" :href="route('accounting.chart-of-accounts')" wire:navigate>Cancel</flux:button>
+            <flux:button type="submit" variant="primary">Save Account</flux:button>
         </div>
-    </flux:card>
-
-    <div class="mt-6 flex justify-end gap-4">
-        <flux:button variant="ghost" :href="route('accounting.chart-of-accounts')" wire:navigate>Cancel</flux:button>
-        <flux:button variant="primary" wire:click="save">Save Account</flux:button>
-    </div>
+    </form>
 </div>

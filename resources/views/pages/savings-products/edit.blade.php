@@ -54,34 +54,24 @@ new #[Layout('layouts::app')] class extends Component {
         <flux:button variant="ghost" :href="route('savings-products.index')" wire:navigate>Back</flux:button>
     </div>
 
-    <flux:card>
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:input wire:model="name" label="Product Name" required />
-                <flux:input wire:model="code" label="Code" required />
-            </div>
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
 
-            <flux:textarea wire:model="description" label="Description" />
+    <form wire:submit="save">
+        <flux:card class="space-y-6">
+            @include('pages.savings-products._form')
+        </flux:card>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:input wire:model="interest_rate" label="Annual Interest Rate (%)" type="number" step="0.01" required />
-                <flux:input wire:model="min_balance" label="Minimum Balance" type="number" step="0.01" required />
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:input wire:model="min_deposit" label="Minimum Deposit" type="number" step="0.01" required />
-                <flux:input wire:model="withdrawal_fee" label="Withdrawal Fee" type="number" step="0.01" required />
-            </div>
-
-            <flux:select wire:model="status" label="Status" required>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-            </flux:select>
+        <div class="mt-6 flex justify-end gap-4">
+            <flux:button variant="ghost" :href="route('savings-products.index')" wire:navigate>Cancel</flux:button>
+            <flux:button type="submit" variant="primary">Update Product</flux:button>
         </div>
-    </flux:card>
-
-    <div class="mt-6 flex justify-end gap-4">
-        <flux:button variant="ghost" :href="route('savings-products.index')" wire:navigate>Cancel</flux:button>
-        <flux:button variant="primary" wire:click="save">Update Product</flux:button>
-    </div>
+    </form>
 </div>

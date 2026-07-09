@@ -36,8 +36,8 @@ new #[Layout('layouts::app')] class extends Component {
     </div>
 
     <div class="flex gap-4 mb-4">
-        <flux:input wire:model.live.debounce.300ms="search" placeholder="Search client..." icon="magnifying-glass" class="flex-1" />
-        <flux:select wire:model.live="status" class="w-48">
+        <flux:input wire:model.live.debounce.300ms="search" placeholder="Search client..." icon="magnifying-glass" />
+        <flux:select wire:model.live="status" class="w-auto">
             <option value="">All Status</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
@@ -50,7 +50,7 @@ new #[Layout('layouts::app')] class extends Component {
 
     <flux:table>
         <flux:table.columns>
-            <flux:table.column>Client</flux:table.column>
+            <flux:table.column>Client</flux:table.column> 
             <flux:table.column>Product</flux:table.column>
             <flux:table.column>Principal</flux:table.column>
             <flux:table.column>Balance</flux:table.column>
@@ -61,11 +61,11 @@ new #[Layout('layouts::app')] class extends Component {
 
         <flux:table.rows>
             @foreach ($this->loans as $loan)
-                <flux:table.row :key="$loan->id">
+                <flux:table.row wire:key="loan-{{ $loan->id }}">
                     <flux:table.cell>
                         <flux:heading size="sm">{{ $loan->client->full_name }}</flux:heading>
                         <flux:text>{{ $loan->branch->name }}</flux:text>
-                    </flux:table.cell>
+                    </flux:table.cell> 
                     <flux:table.cell>{{ $loan->product->name ?? '-' }}</flux:table.cell>
                     <flux:table.cell>{{ number_format($loan->principal_amount, 2) }}</flux:table.cell>
                     <flux:table.cell>{{ number_format($loan->amortizationSchedule()->where('status', '!=', 'paid')->sum('total_due') - $loan->amortizationSchedule()->sum('paid_amount'), 2) }}</flux:table.cell>
@@ -74,15 +74,22 @@ new #[Layout('layouts::app')] class extends Component {
                         @php
                             $colors = ['pending' => 'yellow', 'approved' => 'blue', 'active' => 'green', 'closed' => 'zinc', 'rejected' => 'red', 'written-off' => 'red'];
                         @endphp
-                        <flux:badge :color="$colors[$loan->status] ?? 'zinc'">{{ ucfirst($loan->status) }}</flux:badge>
+                        <flux:badge size="sm" :color="$colors[$loan->status] ?? 'zinc'">{{ ucfirst($loan->status) }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
-                        <flux:button icon="eye" size="sm" variant="ghost" :href="route('loans.show', $loan)" wire:navigate />
-                    </flux:table.cell>
+                        <flux:dropdown position="bottom" align="end" offset="-15">
+                            <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom"></flux:button>
+                            <flux:menu> 
+                                <flux:menu.item icon="eye" :href="route('loans.show', $loan)" wire:navigate >View Details</flux:menu.item>
+                                <flux:menu.item icon="pencil" :href="route('loans.edit', $loan)" wire:navigate >Edit</flux:menu.item>
+                                <flux:menu.item icon="archive-box" variant="danger">Archive</flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
+                    </flux:table.cell> 
                 </flux:table.row>
             @endforeach
         </flux:table.rows>
     </flux:table>
 
-    {{ $this->loans->links() }}
+    <flux:pagination :paginator="$this->loans" />
 </div>

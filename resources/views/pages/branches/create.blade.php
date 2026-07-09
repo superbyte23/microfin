@@ -41,26 +41,24 @@ new #[Layout('layouts::app')] class extends Component {
         </div>
     </div>
 
-    <flux:card class="max-w-2xl">
-        <form wire:submit="save" class="space-y-6">
-            <div class="grid grid-cols-2 gap-4">
-                <flux:input wire:model="name" label="Branch Name" required />
-                <flux:input wire:model="code" label="Branch Code" required hint="Unique identifier" />
-            </div>
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
 
-            <flux:textarea wire:model="address" label="Address" />
+    <form wire:submit="save">
+        <flux:card class="max-w-2xl space-y-6">
+            @include('pages.branches._form')
+        </flux:card>
 
-            <div class="grid grid-cols-2 gap-4">
-                <flux:input wire:model="phone" label="Phone" type="tel" />
-                <flux:input wire:model="email" label="Email" type="email" />
-            </div>
-
-            <flux:switch wire:model="is_active" label="Active" />
-
-            <div class="flex gap-2 justify-end">
-                <flux:button :href="route('branches.index')" variant="ghost" wire:navigate>Cancel</flux:button>
-                <flux:button type="submit" variant="primary">Save</flux:button>
-            </div>
-        </form>
-    </flux:card>
+        <div class="mt-6 flex gap-2 justify-end">
+            <flux:button :href="route('branches.index')" variant="ghost" wire:navigate>Cancel</flux:button>
+            <flux:button type="submit" variant="primary">Save</flux:button>
+        </div>
+    </form>
 </div>

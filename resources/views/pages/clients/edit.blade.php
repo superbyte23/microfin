@@ -10,7 +10,7 @@ new #[Layout('layouts::app')] class extends Component {
     public Client $client;
 
     public string $first_name = '';
-    public string $middle_name = '';
+    public ?string $middle_name = null;
     public string $last_name = '';
     public ?string $suffix = null;
     public ?string $type = 'individual';
@@ -23,13 +23,16 @@ new #[Layout('layouts::app')] class extends Component {
     public ?string $branch_id = null;
     public ?string $group_id = null;
     public ?string $status = 'active';
+    public ?string $member_id = null;
+    public ?string $pin = null;
+    public bool $showPin = false;
 
     public function mount(): void
     {
         $this->fill($this->client->only([
             'first_name', 'middle_name', 'last_name', 'suffix', 'type',
             'birth_date', 'gender', 'civil_status', 'phone', 'email', 'address',
-            'branch_id', 'group_id', 'status',
+            'branch_id', 'group_id', 'status', 'member_id',
         ]));
     }
 
@@ -49,7 +52,13 @@ new #[Layout('layouts::app')] class extends Component {
             'address' => 'nullable|string',
             'branch_id' => 'required|exists:branches,id',
             'status' => 'required|in:active,inactive,restricted',
+            'member_id' => 'required|string|max:50|unique:clients,member_id,' . $this->client->id,
+            'pin' => 'nullable|string|digits:4',
         ]);
+
+        if (! $data['pin']) {
+            unset($data['pin']);
+        }
 
         $this->client->update($data);
 
@@ -63,8 +72,8 @@ new #[Layout('layouts::app')] class extends Component {
 };
 ?>
 
-<div>
-    <div class="flex items-center justify-between mb-6">
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
         <div>
             <flux:heading size="xl">{{ $client->full_name }}</flux:heading>
             <flux:subheading>Edit client information</flux:subheading>
@@ -72,76 +81,22 @@ new #[Layout('layouts::app')] class extends Component {
         <flux:button variant="ghost" :href="route('clients.index')" wire:navigate>Back</flux:button>
     </div>
 
-    <flux:card>
-        <div>
-            <flux:heading>Personal Information</flux:heading>
-        </div>
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <flux:input wire:model="first_name" label="First Name" required />
-                <flux:input wire:model="middle_name" label="Middle Name" />
-                <flux:input wire:model="last_name" label="Last Name" required />
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <flux:input wire:model="suffix" label="Suffix" placeholder="Jr., III" />
-                <flux:select wire:model="type" label="Client Type" required>
-                    <option value="individual">Individual</option>
-                    <option value="group">Group</option>
-                    <option value="corporate">Corporate</option>
-                </flux:select>
-                <flux:select wire:model="gender" label="Gender">
-                    <option value="">-- Select --</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </flux:select>
-                <flux:select wire:model="civil_status" label="Civil Status">
-                    <option value="">-- Select --</option>
-                    <option value="single">Single</option>
-                    <option value="married">Married</option>
-                    <option value="widowed">Widowed</option>
-                    <option value="divorced">Divorced</option>
-                </flux:select>
-            </div>
-
-            <flux:input wire:model="birth_date" label="Birth Date" type="date" />
-        </div>
-    </flux:card>
-
-    <flux:card class="mt-6">
-        <div>
-            <flux:heading>Contact & Address</flux:heading>
-        </div>
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:input wire:model="phone" label="Phone" type="tel" />
-                <flux:input wire:model="email" label="Email" type="email" />
-            </div>
-            <flux:textarea wire:model="address" label="Address" />
-        </div>
-    </flux:card>
-
-    <flux:card class="mt-6">
-        <div>
-            <flux:heading>Assignment</flux:heading>
-        </div>
-        <div class="space-y-4">
-            <flux:select wire:model="branch_id" label="Branch" required>
-                @foreach ($this->branches() as $branch)
-                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
                 @endforeach
-            </flux:select>
+            </ul>
+        </flux:card>
+    @endif
 
-            <flux:select wire:model="status" label="Status" required>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="restricted">Restricted</option>
-            </flux:select>
+    <form wire:submit="save" class="space-y-6">
+        @include('pages.clients._form')
+
+        <div class="flex justify-end gap-4">
+            <flux:button variant="ghost" :href="route('clients.index')" wire:navigate>Cancel</flux:button>
+            <flux:button type="submit" variant="primary">Update Client</flux:button>
         </div>
-    </flux:card>
-
-    <div class="mt-6 flex justify-end gap-4">
-        <flux:button variant="ghost" :href="route('clients.index')" wire:navigate>Cancel</flux:button>
-        <flux:button variant="primary" wire:click="save">Update Client</flux:button>
-    </div>
+    </form>
 </div>

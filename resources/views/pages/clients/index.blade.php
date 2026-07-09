@@ -17,7 +17,7 @@ new #[Layout('layouts::app')] class extends Component {
     {
         return Client::query()
             ->with('branch')
-            ->when($this->search, fn($q) => $q->whereAny(['first_name', 'middle_name', 'last_name', 'phone', 'email'], 'like', "%{$this->search}%"))
+            ->when($this->search, fn($q) => $q->whereAny(['first_name', 'middle_name', 'last_name', 'phone', 'email', 'member_id'], 'like', "%{$this->search}%"))
             ->orderBy('last_name')
             ->paginate(15);
     }
@@ -43,6 +43,7 @@ new #[Layout('layouts::app')] class extends Component {
 
     <flux:table>
         <flux:table.columns>
+            <flux:table.column>Member ID</flux:table.column>
             <flux:table.column>Name</flux:table.column>
             <flux:table.column>Contact</flux:table.column>
             <flux:table.column>Branch</flux:table.column>
@@ -53,10 +54,13 @@ new #[Layout('layouts::app')] class extends Component {
 
         <flux:table.rows>
             @foreach ($this->clients as $client)
-                <flux:table.row :key="$client->id">
+                <flux:table.row wire:key="client-{{ $client->id }}">
+                    <flux:table.cell>
+                        <flux:text class="font-mono text-xs">{{ $client->member_id }}</flux:text>
+                    </flux:table.cell>
                     <flux:table.cell>
                         <flux:heading size="sm">{{ $client->full_name }}</flux:heading>
-                        <flux:text>{{ $client->address }}</flux:text>
+                        <flux:text class="text-xs">{{ $client->address }}</flux:text>
                     </flux:table.cell>
                     <flux:table.cell>
                         <flux:text>{{ $client->phone }}</flux:text>
@@ -67,7 +71,7 @@ new #[Layout('layouts::app')] class extends Component {
                         <flux:badge size="sm">{{ ucfirst($client->type) }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge :color="$client->status === 'active' ? 'green' : ($client->status === 'restricted' ? 'yellow' : 'zinc')">
+                        <flux:badge size="sm" :color="$client->status === 'active' ? 'green' : ($client->status === 'restricted' ? 'yellow' : 'zinc')">
                             {{ ucfirst($client->status) }}
                         </flux:badge>
                     </flux:table.cell>
@@ -90,5 +94,5 @@ new #[Layout('layouts::app')] class extends Component {
         </flux:table.rows>
     </flux:table>
 
-    {{ $this->clients->links() }}
+    <flux:pagination :paginator="$this->clients" />
 </div>

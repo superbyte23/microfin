@@ -2,7 +2,6 @@
 
 use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
-use App\Models\JournalItem;
 use Flux\Flux;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -103,66 +102,102 @@ new #[Layout('layouts::app')] class extends Component {
         <flux:button variant="ghost" :href="route('accounting.journals')" wire:navigate>Back</flux:button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
-            <flux:card>
-                <div>
-                    <flux:heading>Entry Lines</flux:heading>
-                    <flux:text>Total Debits: <span class="text-red-600 font-bold">{{ number_format($this->getTotalDebitsProperty(), 2) }}</span>
-                    · Total Credits: <span class="text-green-600 font-bold">{{ number_format($this->getTotalCreditsProperty(), 2) }}</span></flux:text>
-                </div>
-                <div class="space-y-4">
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
+
+    <form wire:submit="save">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <flux:card class="space-y-4">
+                    <div>
+                        <flux:heading>Entry Lines</flux:heading>
+                        <flux:text>Total Debits: <span class="text-red-600 font-bold">{{ number_format($this->getTotalDebitsProperty(), 2) }}</span>
+                        · Total Credits: <span class="text-green-600 font-bold">{{ number_format($this->getTotalCreditsProperty(), 2) }}</span></flux:text>
+                    </div>
+
                     @foreach ($lines as $i => $line)
                         <div class="flex gap-2 items-start">
                             <div class="flex-1">
-                                <flux:select wire:model="lines.{{ $i }}.account_id" placeholder="Select account">
-                                    <option value="">-- Account --</option>
-                                    @foreach ($this->accounts() as $account)
-                                        <option value="{{ $account->id }}">{{ $account->code }} - {{ $account->name }}</option>
-                                    @endforeach
-                                </flux:select>
+                                <flux:field>
+                                    <flux:label hidden>Account</flux:label>
+                                    <flux:select wire:model="lines.{{ $i }}.account_id">
+                                        <option value="">-- Account --</option>
+                                        @foreach ($this->accounts() as $account)
+                                            <option value="{{ $account->id }}">{{ $account->code }} - {{ $account->name }}</option>
+                                        @endforeach
+                                    </flux:select>
+                                </flux:field>
                             </div>
                             <div class="w-24">
-                                <flux:select wire:model="lines.{{ $i }}.type">
-                                    <option value="debit">Debit</option>
-                                    <option value="credit">Credit</option>
-                                </flux:select>
+                                <flux:field>
+                                    <flux:label hidden>Type</flux:label>
+                                    <flux:select wire:model="lines.{{ $i }}.type">
+                                        <option value="debit">Debit</option>
+                                        <option value="credit">Credit</option>
+                                    </flux:select>
+                                </flux:field>
                             </div>
                             <div class="w-32">
-                                <flux:input wire:model="lines.{{ $i }}.amount" type="number" step="0.01" placeholder="0.00" />
+                                <flux:field>
+                                    <flux:label hidden>Amount</flux:label>
+                                    <flux:input wire:model="lines.{{ $i }}.amount" type="number" step="0.01" placeholder="0.00" />
+                                </flux:field>
                             </div>
                             <div class="flex-1">
-                                <flux:input wire:model="lines.{{ $i }}.description" placeholder="Description (optional)" />
+                                <flux:field>
+                                    <flux:label hidden>Description</flux:label>
+                                    <flux:input wire:model="lines.{{ $i }}.description" placeholder="Description (optional)" />
+                                </flux:field>
                             </div>
-                            <flux:button icon="trash" size="sm" variant="ghost" wire:click="removeLine({{ $i }})" class="mt-1" />
+                            <flux:button type="button" icon="trash" size="sm" variant="ghost" wire:click="removeLine({{ $i }})" class="mt-1" />
                         </div>
                     @endforeach
-                    <flux:button variant="ghost" wire:click="addLine" class="w-full">+ Add Line</flux:button>
-                </div>
-            </flux:card>
-        </div>
 
-        <div>
-            <flux:card>
-                <div>
+                    <flux:button type="button" variant="ghost" wire:click="addLine" class="w-full">+ Add Line</flux:button>
+                </flux:card>
+            </div>
+
+            <div>
+                <flux:card class="space-y-4">
                     <flux:heading>Entry Details</flux:heading>
-                </div>
-                <div class="space-y-4">
-                    <flux:input wire:model="entry_date" label="Entry Date" type="date" required />
-                    <flux:textarea wire:model="description" label="Description" required />
-                    <flux:input wire:model="reference_type" label="Reference Type" placeholder="e.g. loan_payment" />
-                    <flux:select wire:model="branch_id" label="Branch" required>
-                        @foreach (\App\Models\Branch::orderBy('name')->get() as $branch)
-                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                        @endforeach
-                    </flux:select>
-                </div>
-            </flux:card>
 
-            <div class="mt-6 space-y-2">
-                <flux:button variant="primary" wire:click="save" class="w-full">Save Entry</flux:button>
-                <flux:button variant="ghost" :href="route('accounting.journals')" wire:navigate class="w-full">Cancel</flux:button>
+                    <flux:field>
+                        <flux:label>Entry Date</flux:label>
+                        <flux:input wire:model="entry_date" type="date" required />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Description</flux:label>
+                        <flux:textarea wire:model="description" required />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Reference Type</flux:label>
+                        <flux:input wire:model="reference_type" placeholder="e.g. loan_payment" />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Branch</flux:label>
+                        <flux:select wire:model="branch_id" required>
+                            @foreach (\App\Models\Branch::orderBy('name')->get() as $branch)
+                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                            @endforeach
+                        </flux:select>
+                    </flux:field>
+                </flux:card>
+
+                <div class="mt-6 space-y-2">
+                    <flux:button type="submit" variant="primary" class="w-full">Save Entry</flux:button>
+                    <flux:button variant="ghost" :href="route('accounting.journals')" wire:navigate class="w-full">Cancel</flux:button>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>

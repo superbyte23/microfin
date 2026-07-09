@@ -50,7 +50,7 @@ new #[Layout('layouts::app')] class extends Component {
                     $debits = $entry->items->where('type', 'debit')->sum('amount');
                     $credits = $entry->items->where('type', 'credit')->sum('amount');
                 @endphp
-                <flux:table.row :key="$entry->id">
+                <flux:table.row wire:key="entry-{{ $entry->id }}">
                     <flux:table.cell>{{ $entry->entry_date->format('M d, Y') }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:text>{{ Str::limit($entry->description, 40) }}</flux:text>
@@ -70,5 +70,5 @@ new #[Layout('layouts::app')] class extends Component {
         </flux:table.rows>
     </flux:table>
 
-    {{ $this->entries->links() }}
+    <flux:pagination :paginator="$this->entries" />
 </div>

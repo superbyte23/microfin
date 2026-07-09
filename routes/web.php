@@ -62,6 +62,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('reports/loan-portfolio', 'pages::reports.loan-portfolio')->name('reports.loan-portfolio');
     Route::livewire('reports/collections', 'pages::reports.collections')->name('reports.collections');
     Route::livewire('reports/savings', 'pages::reports.savings')->name('reports.savings');
+
+    Route::livewire('/dashboard-sample', 'pages::sample');
+
 });
 
 require __DIR__.'/settings.php';

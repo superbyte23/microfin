@@ -1,26 +1,83 @@
 <?php
 
 use App\Models\Branch;
+use App\Models\Client;
 use App\Models\Loan;
 use App\Models\LoanProduct;
 use Flux\Flux;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 new #[Layout('layouts::app')] class extends Component {
     public Loan $loan;
 
+    public ?string $client_id = null;
     public ?string $loan_product_id = null;
     public ?string $branch_id = null;
     public string $principal_amount = '';
     public string $purpose = '';
     public string $status = '';
+    public string $search = '';
+
+    public string $product_interest_rate = '';
+    public string $product_interest_type = '';
+    public int $product_term_months = 0;
+    public string $product_payment_frequency = '';
+    public string $product_min_amount = '0';
+    public string $product_max_amount = '';
 
     public function mount(): void
     {
         $this->fill($this->loan->only([
-            'loan_product_id', 'branch_id', 'principal_amount', 'purpose', 'status',
+            'client_id', 'loan_product_id', 'branch_id', 'principal_amount', 'purpose', 'status',
         ]));
+
+        $this->loadProduct($this->loan_product_id);
+    }
+
+    public function updatedLoanProductId($value): void
+    {
+        $this->loadProduct($value);
+    }
+
+    public function loadProduct(?string $id = null): void
+    {
+        $id ??= $this->loan_product_id;
+        if (!$id) {
+            $this->product_interest_rate = '';
+            $this->product_interest_type = '';
+            $this->product_term_months = 0;
+            $this->product_payment_frequency = '';
+            $this->product_min_amount = '0';
+            $this->product_max_amount = '';
+            return;
+        }
+
+        $product = LoanProduct::find($id);
+        if (!$product) {
+            return;
+        }
+
+        $this->product_interest_rate = (string) $product->interest_rate;
+        $this->product_interest_type = $product->interest_type;
+        $this->product_term_months = $product->default_term_months;
+        $this->product_payment_frequency = $product->payment_frequency;
+        $this->product_min_amount = (string) $product->min_amount;
+        $this->product_max_amount = $product->max_amount ? (string) $product->max_amount : '';
+    }
+
+    #[Computed]
+    public function clients()
+    {
+        if (!strlen($this->search)) {
+            return collect();
+        }
+        return Client::query()
+            ->where('status', 'active')
+            ->whereAny(['first_name', 'middle_name', 'last_name', 'phone'], 'like', "%{$this->search}%")
+            ->orderBy('last_name')
+            ->get();
     }
 
     #[Computed]
@@ -30,22 +87,20 @@ new #[Layout('layouts::app')] class extends Component {
     }
 
     #[Computed]
-    public function branches()
+    public function branch()
     {
-        return Branch::orderBy('name')->get();
+        return Branch::find($this->branch_id);
     }
 
     public function save(): void
     {
-        $data = $this->validate([
-            'loan_product_id' => 'required|exists:loan_products,id',
-            'branch_id' => 'required|exists:branches,id',
-            'principal_amount' => 'required|numeric|min:0',
-            'purpose' => 'nullable|string',
+        $this->validate([
             'status' => 'required|in:pending,approved,active,closed,rejected,written-off',
         ]);
 
-        $this->loan->update($data);
+        $this->loan->update([
+            'status' => $this->status,
+        ]);
 
         Flux::toast('Loan updated.', variant: 'success');
     }
@@ -56,44 +111,45 @@ new #[Layout('layouts::app')] class extends Component {
     <div class="flex items-center justify-between mb-6">
         <div>
             <flux:heading size="xl">Edit Loan</flux:heading>
-            <flux:subheading>{{ $loan->client->full_name }}</flux:subheading>
+            <flux:subheading>{{ $this->loan->client->full_name }}</flux:subheading>
         </div>
         <flux:button variant="ghost" :href="route('loans.show', $loan)" wire:navigate>Back to Loan</flux:button>
     </div>
 
-    <flux:card>
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:select wire:model="loan_product_id" label="Loan Product" required>
-                    @foreach ($this->products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->interest_rate }}%)</option>
-                    @endforeach
-                </flux:select>
-                <flux:input wire:model="principal_amount" label="Principal Amount" type="number" step="0.01" required />
-            </div>
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
 
-            <flux:textarea wire:model="purpose" label="Loan Purpose" />
+    <form wire:submit="save">
+        <div class="grid grid-cols-1 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                @include('pages.loans._form', ['editing' => true])
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:select wire:model="branch_id" label="Branch" required>
-                    @foreach ($this->branches as $branch)
-                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                    @endforeach
-                </flux:select>
-                <flux:select wire:model="status" label="Status" required>
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="active">Active</option>
-                    <option value="closed">Closed</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="written-off">Written Off</option>
-                </flux:select>
+                <flux:card class="space-y-4">
+                    <flux:heading size="lg">Status</flux:heading>
+                    <flux:field>
+                        <flux:label>Status</flux:label>
+                        <flux:select wire:model="status" required>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="active">Active</option>
+                            <option value="closed">Closed</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="written-off">Written Off</option>
+                        </flux:select>
+                    </flux:field>
+                </flux:card> 
+                <div class="mt-6 space-y-2">
+                    <flux:button type="submit" variant="primary" class="w-full">Update Loan</flux:button>
+                    <flux:button variant="ghost" :href="route('loans.show', $loan)" wire:navigate class="w-full">Cancel</flux:button>
+                </div>
             </div>
         </div>
-    </flux:card>
-
-    <div class="mt-6 flex justify-end gap-4">
-        <flux:button variant="ghost" :href="route('loans.show', $loan)" wire:navigate>Cancel</flux:button>
-        <flux:button variant="primary" wire:click="save">Update Loan</flux:button>
-    </div>
+    </form>
 </div>

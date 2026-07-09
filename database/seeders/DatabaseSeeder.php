@@ -14,6 +14,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleSeeder::class);
         $this->call(ChartOfAccountSeeder::class);
+        $this->call(BranchSeeder::class);
+        $this->call(ClientSeeder::class);
+        $this->call(LoanProductSeeder::class);
 
         $admin = User::factory()->create([
             'name' => 'Super Admin',

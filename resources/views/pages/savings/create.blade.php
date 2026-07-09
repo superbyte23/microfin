@@ -85,17 +85,30 @@ new #[Layout('layouts::app')] class extends Component {
         <flux:button variant="ghost" :href="route('savings.index')" wire:navigate>Back</flux:button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <flux:card>
-            <div>
-                <flux:heading>Client</flux:heading>
-            </div>
-            <div>
-                <flux:input wire:model.live.debounce.300ms="search" placeholder="Search clients..." icon="magnifying-glass" class="mb-4" />
+    @if ($errors->any())
+        <flux:card class="border-red-300 bg-red-50 dark:bg-red-950">
+            <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </flux:card>
+    @endif
+
+    <form wire:submit="save">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <flux:card class="space-y-4">
+                <flux:heading size="lg">Client</flux:heading>
+
+                <flux:field>
+                    <flux:label>Search Clients</flux:label>
+                    <flux:input wire:model.live.debounce.300ms="search" placeholder="Search clients..." icon="magnifying-glass" />
+                </flux:field>
+
                 <div class="space-y-2 max-h-48 overflow-y-auto">
                     @foreach ($this->clients as $client)
                         <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                            <flux:radio wire:model="client_id" value="{{ $client->id }}" />
+                            <input type="radio" name="client_id" wire:model="client_id" value="{{ $client->id }}" class="text-indigo-600 focus:ring-indigo-500">
                             <div>
                                 <div class="font-medium">{{ $client->full_name }}</div>
                                 <flux:text class="text-sm">{{ $client->branch?->name }}</flux:text>
@@ -103,32 +116,41 @@ new #[Layout('layouts::app')] class extends Component {
                         </label>
                     @endforeach
                 </div>
-            </div>
-        </flux:card>
+                <flux:error name="client_id" />
+            </flux:card>
 
-        <flux:card>
-            <div>
-                <flux:heading>Account Details</flux:heading>
-            </div>
-            <div class="space-y-4">
-                <flux:select wire:model="savings_product_id" label="Savings Product" required>
-                    <option value="">-- Select --</option>
-                    @foreach ($this->products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->interest_rate }}%)</option>
-                    @endforeach
-                </flux:select>
-                <flux:select wire:model="branch_id" label="Branch" required>
-                    @foreach (\App\Models\Branch::orderBy('name')->get() as $branch)
-                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                    @endforeach
-                </flux:select>
-                <flux:input wire:model="initial_deposit" label="Initial Deposit" type="number" step="0.01" required />
-            </div>
-        </flux:card>
-    </div>
+            <flux:card class="space-y-4">
+                <flux:heading size="lg">Account Details</flux:heading>
 
-    <div class="mt-6 flex justify-end gap-4">
-        <flux:button variant="ghost" :href="route('savings.index')" wire:navigate>Cancel</flux:button>
-        <flux:button variant="primary" wire:click="save">Create Account</flux:button>
-    </div>
+                <flux:field>
+                    <flux:label>Savings Product</flux:label>
+                    <flux:select wire:model="savings_product_id" required>
+                        <option value="">-- Select --</option>
+                        @foreach ($this->products as $product)
+                            <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->interest_rate }}%)</option>
+                        @endforeach
+                    </flux:select>
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Branch</flux:label>
+                    <flux:select wire:model="branch_id" required>
+                        @foreach (\App\Models\Branch::orderBy('name')->get() as $branch)
+                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                        @endforeach
+                    </flux:select>
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Initial Deposit</flux:label>
+                    <flux:input wire:model="initial_deposit" type="number" step="0.01" required />
+                </flux:field>
+            </flux:card>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-4">
+            <flux:button variant="ghost" :href="route('savings.index')" wire:navigate>Cancel</flux:button>
+            <flux:button type="submit" variant="primary">Create Account</flux:button>
+        </div>
+    </form>
 </div>

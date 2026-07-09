@@ -296,7 +296,7 @@ new #[Layout('layouts::app')] class extends Component {
                 </flux:table.columns>
                 <flux:table.rows>
                     @foreach ($this->allSessions as $s)
-                        <flux:table.row :key="$s->id">
+                        <flux:table.row wire:key="session-{{ $s->id }}">
                             <flux:table.cell>{{ $s->session_date?->format('M d, Y') ?? $s->created_at->format('M d, Y') }}</flux:table.cell>
                             <flux:table.cell>{{ $s->branch?->name }}</flux:table.cell>
                             <flux:table.cell>{{ number_format($s->opening_balance, 2) }}</flux:table.cell>
@@ -310,7 +310,7 @@ new #[Layout('layouts::app')] class extends Component {
                     @endforeach
                 </flux:table.rows>
             </flux:table>
-            {{ $this->allSessions->links() }}
+            <flux:pagination :paginator="$this->allSessions" />
         </div>
     </flux:card>
 </div>

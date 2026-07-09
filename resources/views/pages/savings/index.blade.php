@@ -49,7 +49,7 @@ new #[Layout('layouts::app')] class extends Component {
 
         <flux:table.rows>
             @foreach ($this->accounts as $account)
-                <flux:table.row :key="$account->id">
+                <flux:table.row wire:key="account-{{ $account->id }}">
                     <flux:table.cell><flux:badge size="sm" variant="pill">{{ $account->account_number }}</flux:badge></flux:table.cell>
                     <flux:table.cell>{{ $account->client->full_name }}</flux:table.cell>
                     <flux:table.cell>{{ $account->product?->name }}</flux:table.cell>
@@ -70,5 +70,5 @@ new #[Layout('layouts::app')] class extends Component {
         </flux:table.rows>
     </flux:table>
 
-    {{ $this->accounts->links() }}
+    <flux:pagination :paginator="$this->accounts" />
 </div>
