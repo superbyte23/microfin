@@ -23,32 +23,40 @@ class InterestCalculator
     {
         $principal = (float) $loan->principal_amount;
         $annualRate = (float) $loan->interest_rate / 100;
-        $term = $loan->term_months;
+        $termMonths = $loan->term_months;
+        $frequency = $loan->payment_frequency;
 
-        $monthlyPrincipal = $principal / $term;
-        $monthlyInterest = ($principal * $annualRate) / 12;
+        $numInstallments = $this->getNumInstallments($termMonths, $frequency);
+        $totalInterest = ($principal * $annualRate) * ($termMonths / 12);
 
-        return $this->buildSchedule($loan, $term, $monthlyPrincipal, $monthlyInterest);
+        $installmentPrincipal = $principal / $numInstallments;
+        $installmentInterest = $totalInterest / $numInstallments;
+
+        return $this->buildSchedule($loan, $numInstallments, $installmentPrincipal, $installmentInterest);
     }
 
     public function decliningBalance(Loan $loan): Collection
     {
         $principal = (float) $loan->principal_amount;
         $annualRate = (float) $loan->interest_rate / 100;
-        $monthlyRate = $annualRate / 12;
-        $term = $loan->term_months;
+        $frequency = $loan->payment_frequency;
+        $termMonths = $loan->term_months;
 
-        $payment = $this->pmt($monthlyRate, $term, $principal);
+        $periodsPerYear = $this->getPeriodsPerYear($frequency);
+        $numInstallments = $this->getNumInstallments($termMonths, $frequency);
+        $ratePerPeriod = $annualRate / $periodsPerYear;
+
+        $payment = $this->pmt($ratePerPeriod, $numInstallments, $principal);
         $balance = $principal;
 
         $schedules = collect();
         $paymentDate = $this->getFirstPaymentDate($loan);
 
-        for ($i = 1; $i <= $term; $i++) {
-            $interest = round($balance * $monthlyRate, 2);
+        for ($i = 1; $i <= $numInstallments; $i++) {
+            $interest = round($balance * $ratePerPeriod, 2);
             $principalPart = round($payment - $interest, 2);
 
-            if ($i === $term) {
+            if ($i === $numInstallments) {
                 $principalPart = $balance;
             }
 
@@ -69,7 +77,7 @@ class InterestCalculator
             $schedule->balance_after = round(max($balance, 0), 2);
 
             $schedules->push($schedule);
-            $paymentDate->addMonth();
+            $this->advanceDate($paymentDate, $frequency);
         }
 
         return $schedules;
@@ -79,28 +87,30 @@ class InterestCalculator
     {
         $principal = (float) $loan->principal_amount;
         $annualRate = (float) $loan->interest_rate / 100;
-        $term = $loan->term_months;
+        $termMonths = $loan->term_months;
+        $frequency = $loan->payment_frequency;
 
-        $totalInterest = ($principal * $annualRate) * ($term / 12);
+        $numInstallments = $this->getNumInstallments($termMonths, $frequency);
+        $totalInterest = ($principal * $annualRate) * ($termMonths / 12);
         $totalAmount = $principal + $totalInterest;
 
-        $monthlyPrincipal = $principal / $term;
-        $monthlyInterest = $totalInterest / $term;
+        $installmentPrincipal = $principal / $numInstallments;
+        $installmentInterest = $totalInterest / $numInstallments;
 
-        return $this->buildSchedule($loan, $term, $monthlyPrincipal, $monthlyInterest);
+        return $this->buildSchedule($loan, $numInstallments, $installmentPrincipal, $installmentInterest);
     }
 
-    private function buildSchedule(Loan $loan, int $term, float $monthlyPrincipal, float $monthlyInterest): Collection
+    private function buildSchedule(Loan $loan, int $numInstallments, float $installmentPrincipal, float $installmentInterest): Collection
     {
         $schedules = collect();
         $paymentDate = $this->getFirstPaymentDate($loan);
         $balance = (float) $loan->principal_amount;
 
-        for ($i = 1; $i <= $term; $i++) {
-            $principalPart = round($monthlyPrincipal, 2);
-            $interestPart = round($monthlyInterest, 2);
+        for ($i = 1; $i <= $numInstallments; $i++) {
+            $principalPart = round($installmentPrincipal, 2);
+            $interestPart = round($installmentInterest, 2);
 
-            if ($i === $term) {
+            if ($i === $numInstallments) {
                 $principalPart = round($balance, 2);
             }
 
@@ -121,7 +131,7 @@ class InterestCalculator
             $schedule->balance_after = round(max($balance, 0), 2);
 
             $schedules->push($schedule);
-            $paymentDate->addMonth();
+            $this->advanceDate($paymentDate, $loan->payment_frequency);
         }
 
         return $schedules;
@@ -140,11 +150,46 @@ class InterestCalculator
     private function getDecliningTotalInterest(Loan $loan): float
     {
         $principal = (float) $loan->principal_amount;
-        $monthlyRate = ((float) $loan->interest_rate / 100) / 12;
-        $term = $loan->term_months;
-        $payment = $this->pmt($monthlyRate, $term, $principal);
+        $frequency = $loan->payment_frequency;
+        $termMonths = $loan->term_months;
 
-        return round($payment * $term - $principal, 2);
+        $periodsPerYear = $this->getPeriodsPerYear($frequency);
+        $numInstallments = $this->getNumInstallments($termMonths, $frequency);
+        $ratePerPeriod = ((float) $loan->interest_rate / 100) / $periodsPerYear;
+
+        $payment = $this->pmt($ratePerPeriod, $numInstallments, $principal);
+
+        return round($payment * $numInstallments - $principal, 2);
+    }
+
+    private function getPeriodsPerYear(string $frequency): int
+    {
+        return match ($frequency) {
+            'weekly' => 52,
+            'bi-monthly' => 24,
+            'daily' => 365,
+            default => 12,
+        };
+    }
+
+    private function getNumInstallments(int $termMonths, string $frequency): int
+    {
+        return match ($frequency) {
+            'weekly' => (int) round($termMonths * 52 / 12),
+            'bi-monthly' => $termMonths * 2,
+            'daily' => (int) round($termMonths * 365 / 12),
+            default => $termMonths,
+        };
+    }
+
+    private function advanceDate(Carbon $date, string $frequency): void
+    {
+        match ($frequency) {
+            'weekly' => $date->addWeek(),
+            'bi-monthly' => $date->addDays(15),
+            'daily' => $date->addDay(),
+            default => $date->addMonth(),
+        };
     }
 
     private function pmt(float $rate, int $nper, float $pv): float
@@ -156,7 +201,7 @@ class InterestCalculator
         return round($pv * ($rate * $factor) / ($factor - 1), 2);
     }
 
-    private function getFirstPaymentDate(Loan $loan): Carbon
+    public function getFirstPaymentDate(Loan $loan): Carbon
     {
         $releaseDate = $loan->release_date
             ? Carbon::parse($loan->release_date)

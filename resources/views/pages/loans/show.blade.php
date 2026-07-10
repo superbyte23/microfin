@@ -36,9 +36,12 @@ new #[Layout('layouts::app')] class extends Component {
 
     public function release(): void
     {
+        $firstPaymentDate = (new InterestCalculator)->getFirstPaymentDate($this->loan);
+
         $this->loan->update([
             'status' => 'active',
             'release_date' => now()->toDateString(),
+            'first_payment_date' => $firstPaymentDate->toDateString(),
         ]);
 
         $calculator = app(InterestCalculator::class);
